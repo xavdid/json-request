@@ -1,0 +1,53 @@
+{
+  "version": "0.0.0",
+  "description": "An extremely simple package for GETting and POSTing JSON.",
+  "main": "lib/index.js",
+  "typings": "lib/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "lint": "eslint src",
+    "test": "jest",
+    "validate": "yarn test && yarn lint"
+  },
+  "keywords": [],
+  "files": [
+    "lib/*.js",
+    "lib/*.d.ts"
+  ],
+  "author": {
+    "name": "David Brownman",
+    "email": "beamneocube@gmail.com",
+    "url": "https://xavd.id"
+  },
+  "license": "ISC",
+  "jest": {
+    "verbose": true,
+    "roots": [
+      "<rootDir>/src"
+    ],
+    "testMatch": [
+      "**/__tests__/**/*.+(ts|tsx|js)",
+      "**/?(*.)+(spec|test).+(ts|tsx|js)"
+    ],
+    "transform": {
+      "^.+\\.(ts|tsx)$": "ts-jest"
+    }
+  },
+  "prettier": {
+    "semi": false,
+    "singleQuote": true
+  },
+  "name": "json-request",
+  "devDependencies": {
+    "@types/jest": "^29.2.6",
+    "eslint": "^8.32.0",
+    "eslint-config-xavdid": "^3.0.0",
+    "jest": "^29.3.1",
+    "prettier": "^2.8.3",
+    "ts-jest": "^29.0.5",
+    "typescript": "4.9.4"
+  },
+  "dependencies": {
+    "node-fetch": "^3.3.0"
+  }
+}
