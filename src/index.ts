@@ -7,8 +7,10 @@ const jsonMime = 'application/json'
 type METHOD = 'GET' | 'POST' | 'PATCH'
 
 interface Options {
+  // these can only be strings (headers object casts accordingly)
   headers?: { [k: string]: string }
-  query?: { [k: string]: string | number }
+  // there might be more types here
+  query?: { [k: string]: string | number | boolean }
 }
 
 const sendRequest = async <Response>(
@@ -20,8 +22,8 @@ const sendRequest = async <Response>(
   body?: object,
   options?: Options
 ): Promise<Response> => {
-  const headers = new Headers({ ...options?.headers })
   // Prep
+  const headers = new Headers({ ...options?.headers })
 
   // JSON only!
   headers.set('content-type', jsonMime)
