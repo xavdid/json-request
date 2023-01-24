@@ -23,6 +23,7 @@
     "email": "beamneocube@gmail.com",
     "url": "https://xavd.id"
   },
+  "repository": "github:xavdid/json-requests",
   "license": "ISC",
   "jest": {
     "verbose": true,
@@ -56,5 +57,8 @@
   "dependencies": {
     "@types/node-fetch": "^2.6.2",
     "node-fetch": "^2.6.8"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

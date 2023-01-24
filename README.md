@@ -20,7 +20,7 @@ Usage is intentionally simple. Each method takes a `url` to start and `Options` 
 
 Each method returns a `Promise` that resolves to the JSON response from the server. Each method will also throw an error if the response `status` is `>= 400`.
 
-### `getJSON`
+### getJSON
 
 ```ts
 function getJSON(url: string, options?: Options): Promise<Response extends object>
@@ -46,7 +46,7 @@ const todo = await getJSON<Todo>('https://jsonplaceholder.typicode.com/todos/1')
 console.log(todo.title) // "some title"
 ```
 
-### `postJSON`
+### postJSON
 
 ```ts
 function postJSON(
@@ -83,7 +83,7 @@ const updatedTodo = await postJSON<Todo>(
 console.log(updatedTodo.title) // "foo"
 ```
 
-### `Options`
+### Options
 
 The `Options` object takes two optional keys:
 
