@@ -1,6 +1,7 @@
 // can remove when fetch is non-experimental
 // maybe Node 20?
 import fetch, { type RequestInit, Headers } from 'node-fetch'
+import { parse, stringify } from 'node:querystring'
 
 const jsonMime = 'application/json'
 
@@ -29,8 +30,14 @@ const sendRequest = async <Response>(
   headers.set('content-type', jsonMime)
   headers.set('accept', jsonMime)
 
-  if (options?.query) {
-    // TODO
+  if (options?.query != null) {
+    if (url.includes('?')) {
+      const [baseUrl, qs] = url.split('?', 2)
+      const parsed = parse(qs)
+      url = `${baseUrl}?${stringify({ ...options.query, ...parsed })}`
+    } else {
+      url += `?${stringify(options.query)}`
+    }
   }
 
   const payload: RequestInit = {
@@ -38,7 +45,7 @@ const sendRequest = async <Response>(
     headers,
   }
 
-  if (body) {
+  if (body != null) {
     payload.body = JSON.stringify(body)
   }
 
@@ -54,16 +61,13 @@ const sendRequest = async <Response>(
   return data as Response
 }
 
-export const get = async <Response extends object>(
+export const getJSON = async <Response extends object>(
   url: string,
   options?: Options
-): Promise<Response> => sendRequest('GET', url, undefined, options)
+): Promise<Response> => await sendRequest('GET', url, undefined, options)
 
-export const post = async <Response extends object>(
+export const postJSON = async <Response extends object>(
   url: string,
-  body?: object,
+  body: object | undefined,
   options?: Options
-): Promise<Response> => sendRequest('POST', url, body, options)
-
-// const j = await get(url)
-// const pj = await post(url, body, {headers, query})
+): Promise<Response> => await sendRequest('POST', url, body, options)
