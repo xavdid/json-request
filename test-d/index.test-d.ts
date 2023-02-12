@@ -102,7 +102,7 @@ try {
   // with basic narrowing
   if (isResponseError(e)) {
     expectType<number>(e.statusCode)
-    expectType<string>(e.code)
+    expectType<'HTTP_ERROR' | 'JSON_PARSE_ERROR'>(e.code)
     expectType<string | object>(e.body)
 
     if (e.code === 'JSON_PARSE_ERROR') {

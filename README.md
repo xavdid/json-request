@@ -18,7 +18,7 @@ yarn add @xavdid/json-requests
 
 Usage is intentionally simple. Each method takes a `url` to start and `Options` to end. The `postJSON` method also takes a `body` in middle.
 
-Each method returns a `Promise` that resolves to the JSON response from the server. Each method will also throw an error if the response `status` is `>= 400` (see [error handling](#error-handling)).
+Each method returns a `Promise` that resolves to the JSON response from the server. Each method will also throw an error if the response status is `>= 400` or the response isn't valid JSON. See [error handling](#error-handling)) for more info.
 
 ### getJSON
 
@@ -125,7 +125,7 @@ const withAuth = await getJSON('https://httpbin.org/get', {
 
 ### Error Handling
 
-This package exposes a custom error class, the `ResponseError`. It's thrown in 2 cases:
+This package raises a custom error class, the `ResponseError`. It's thrown in 2 cases:
 
 1. The response content isn't valid JSON
 2. The server returns a status code `>= 400`
