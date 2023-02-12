@@ -1,6 +1,12 @@
 import { expectType } from 'tsd'
-
-import { getJSON, postJSON } from '../src/index'
+import { ResponseError } from '../src/error'
+import {
+  getJSON,
+  isHTTPError,
+  isJSONError,
+  isResponseError,
+  postJSON,
+} from '../src/index'
 
 // GET
 
@@ -79,3 +85,42 @@ expectType<Promise<object>>(
   // @ts-expect-error -  no nested query
   postJSON('asdf', {}, { query: { nested: { bad: true } } })
 )
+
+// @ts-expect-error - ASDF is not a valid code
+new ResponseError('', 'ADSF', 123, {})
+// @ts-expect-error - last arg should be an object, not a string
+new ResponseError('', 'HTTP_ERROR', 123, 'adsf')
+// @ts-expect-error - last arg should be a string, not an object
+new ResponseError('', 'JSON_PARSE_ERROR', 123, {})
+
+// correct creation
+new ResponseError('', 'HTTP_ERROR', 123, {})
+new ResponseError('', 'JSON_PARSE_ERROR', 123, 'asdf')
+
+try {
+} catch (e) {
+  // with basic narrowing
+  if (isResponseError(e)) {
+    expectType<number>(e.statusCode)
+    expectType<string>(e.code)
+    expectType<string | object>(e.body)
+
+    if (e.code === 'JSON_PARSE_ERROR') {
+      expectType<'JSON_PARSE_ERROR'>(e.code)
+      expectType<string>(e.body)
+    } else {
+      expectType<'HTTP_ERROR'>(e.code)
+      expectType<object>(e.body)
+    }
+  }
+
+  // with fancy narrowing
+  if (isHTTPError(e)) {
+    expectType<'HTTP_ERROR'>(e.code)
+    expectType<object>(e.body)
+  }
+  if (isJSONError(e)) {
+    expectType<'JSON_PARSE_ERROR'>(e.code)
+    expectType<string>(e.body)
+  }
+}

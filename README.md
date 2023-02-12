@@ -18,7 +18,7 @@ yarn add @xavdid/json-requests
 
 Usage is intentionally simple. Each method takes a `url` to start and `Options` to end. The `postJSON` method also takes a `body` in middle.
 
-Each method returns a `Promise` that resolves to the JSON response from the server. Each method will also throw an error if the response `status` is `>= 400`.
+Each method returns a `Promise` that resolves to the JSON response from the server. Each method will also throw an error if the response `status` is `>= 400` (see [error handling](#error-handling)).
 
 ### getJSON
 
@@ -27,6 +27,8 @@ function getJSON(url: string, options?: Options): Promise<Response extends objec
 ```
 
 #### Examples
+
+<!-- these are copied from `readme-examples.test-d.ts`! -->
 
 ```ts
 import { getJSON } from '@xavdid/json-requests'
@@ -57,6 +59,8 @@ function postJSON(
 ```
 
 #### Examples
+
+<!-- these are copied from `readme-examples.test-d.ts`! -->
 
 ```ts
 import { postJSON } from '@xavdid/json-requests'
@@ -121,4 +125,54 @@ const withAuth = await getJSON('https://httpbin.org/get', {
 
 ### Error Handling
 
-If the server doesn't return valid JSON, it'll fail to parse with a standard `SyntaxError`. If the server returns a status `>= 400`, an `Error` will be thrown manually. This is not configurable, so if bad status codes are expected in your application, make sure to catch the errors manually.
+This package exposes a custom error class, the `ResponseError`. It's thrown in 2 cases:
+
+1. The response content isn't valid JSON
+2. The server returns a status code `>= 400`
+
+The error object has the following properties:
+
+- `message`: a human-readable description of the problem
+- `code`: a reliable string which pinpoints the issue. Useful for narrowing down the problem programmatically (much like [Node.js error codes](https://nodejs.org/api/errors.html#errors_error_code)). Possible values are:
+  - `JSON_PARSE_ERROR`
+  - `HTTP_ERROR`
+- `statusCode`: the numeric HTTP response code
+- `body`: the response's body content. If the response was valid JSON, it'll be parsed. If not (`code` is `JSON_PARSE_ERROR`), it's a string. There are helper functions to help type this for you (see below)
+
+Any other errors will be thrown normally.
+
+#### Narrowing Functions
+
+The package includes helper functions to improve the typing of thrown errors:
+
+- `isJSONError(e): boolean`: narrows to a single possible error type
+- `isHTTPError(e): boolean`: narrows to a single possible error type
+- `isResponseError(e): boolean` will let you know an error is any of the above (as opposed to a native or fetch-based error). Useful for safely accessing `.statusCode` or treating unknown errors differently
+
+#### Examples
+
+<!-- these are copied from `readme-examples.test-d.ts`! -->
+
+```ts
+import { getJSON, isJSONError, isHTTPError } from '@xavdid/json-requests'
+
+// within an async function
+
+try {
+  await getJSON('https://httpbin.org/xml')
+} catch (e) {
+  if (isJSONError(e)) {
+    e.body // <-- string; response that's not parsable JSON, like "<xml>...</xml>"
+  }
+  if (isHTTPError(e)) {
+    e.body // <-- object; parsed error response, like {error: "unable to X"}
+  }
+
+  if (isResponseError(e)) {
+    // can be either of the above, but not a native error
+    e.message // string; human readable message
+    e.statusCode // number
+    e.code // string; one of the above
+  }
+}
+```

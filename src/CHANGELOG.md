@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.0
+
+_Released `2023-02-11`_
+
+- Problems with HTTP and JSON parsing now throw custom errors. See the `README` for more info.
+
 ## 0.1.0
 
 _Released `2023-01-23`_

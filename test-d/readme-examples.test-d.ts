@@ -1,7 +1,14 @@
-import { getJSON, postJSON } from '../src'
+import {
+  getJSON,
+  isHTTPError,
+  isJSONError,
+  isResponseError,
+  postJSON,
+} from '../src'
 // ---
 // GET
 
+// ```
 // import { getJSON } from '@xavdid/json-requests'
 
 // within an async function
@@ -19,6 +26,7 @@ const todo = await getJSON<Todo>('https://jsonplaceholder.typicode.com/todos/1')
 console.log(todo.title) // "delectus aut autem"
 
 // POST
+
 // import { postJSON } from '@xavdid/json-requests'
 
 // type Todo = {
@@ -41,8 +49,11 @@ const updatedTodo = await postJSON<Todo>(
 )
 // `todo` is correctly typed
 console.log(updatedTodo.title) // "foo"
+// ```
 
 // OPTIONS
+
+// ```
 // in an async function
 
 // put query params in the object, not the url
@@ -57,3 +68,30 @@ const withAuth = await getJSON('https://httpbin.org/get', {
     authorization: 'Basic eGF2ZGlkOmh1bnRlcjI=',
   },
 })
+// ```
+
+// ERROR HANDLING
+
+// ```
+// import { getJSON, isJSONError, isHTTPError } from '@xavdid/json-requests'
+
+// within an async function
+
+try {
+  await getJSON('https://httpbin.org/xml')
+} catch (e) {
+  if (isJSONError(e)) {
+    e.body // <-- string; response that's not parsable JSON, like "<xml>...</xml>"
+  }
+  if (isHTTPError(e)) {
+    e.body // <-- object; parsed error response, like {error: "unable to X"}
+  }
+
+  if (isResponseError(e)) {
+    // can be either of the above, but not a native error
+    e.message // string; human readable message
+    e.statusCode // number
+    e.code // string; one of the above
+  }
+}
+// ```
