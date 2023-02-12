@@ -1,5 +1,12 @@
 import nock = require('nock')
-import { getJSON, postJSON } from '../index'
+import { ResponseError } from '../error'
+import {
+  getJSON,
+  isHTTPError,
+  isJSONError,
+  isResponseError,
+  postJSON,
+} from '../index'
 
 const URL = 'https://example.com'
 const BODY = { a: 1, b: 'qwer', c: true }
@@ -27,12 +34,40 @@ describe('mocked', () => {
         )
       })
 
-      it('should throw for status', async () => {
+      it('should throw a custom object on a bad status', async () => {
         nock(URL).get('/error').reply(404, { error: 'missing' })
 
-        await expect(getJSON(`${URL}/error`)).rejects.toThrow(
-          'Got a 404 response with body {'
-        )
+        let err: ResponseError | undefined
+
+        try {
+          await getJSON(`${URL}/error`)
+        } catch (e) {
+          err = e as ResponseError
+        }
+
+        expect(err).toBeDefined()
+        expect(err).toBeInstanceOf(ResponseError)
+        expect(err?.code).toEqual('HTTP_ERROR')
+        expect(err?.statusCode).toEqual(404)
+        expect(err?.body).toEqual({ error: 'missing' })
+      })
+
+      it('should throw a custom object on a bad json response', async () => {
+        nock(URL).get('/error').reply(400, 'not json')
+
+        let err: ResponseError | undefined
+
+        try {
+          await getJSON(`${URL}/error`)
+        } catch (e) {
+          err = e as ResponseError
+        }
+
+        expect(err).toBeDefined()
+        expect(err).toBeInstanceOf(ResponseError)
+        expect(err?.code).toEqual('JSON_PARSE_ERROR')
+        expect(err?.statusCode).toEqual(400)
+        expect(err?.body).toEqual('not json')
       })
     })
 
@@ -145,6 +180,20 @@ describe('mocked', () => {
       })
     })
   })
+  describe('error utils', () => {
+    it('should recognize response errors', () => {
+      const e = new ResponseError('', 'JSON_PARSE_ERROR', 123, '')
+      expect(isResponseError(e)).toEqual(true)
+    })
+    it('should recognize json errors', () => {
+      const e = new ResponseError('', 'JSON_PARSE_ERROR', 123, '')
+      expect(isJSONError(e)).toEqual(true)
+    })
+    it('should recognize http errors', () => {
+      const e = new ResponseError('', 'HTTP_ERROR', 123, {})
+      expect(isHTTPError(e)).toEqual(true)
+    })
+  })
 })
 
 describe('live tests', () => {
@@ -208,8 +257,8 @@ describe('live tests', () => {
   })
 
   it('should throw for invalid json', async () => {
-    await expect(getJSON<any>('https://httpbin.org/xml')).rejects.toThrow(
-      'Unexpected token <'
+    await expect(getJSON('https://httpbin.org/xml')).rejects.toThrow(
+      'invalid json response body'
     )
   })
 })
