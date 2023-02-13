@@ -1,7 +1,7 @@
 // can remove when fetch is non-experimental
 // maybe Node 20?
 import fetch, { Headers, type RequestInit } from 'node-fetch'
-import { parse, stringify } from 'node:querystring'
+
 import { ResponseError } from './error'
 
 const jsonMime = 'application/json'
@@ -32,13 +32,15 @@ export const sendRequest = async <Response>(
   headers.set('accept', jsonMime)
 
   if (options?.query != null) {
-    if (url.includes('?')) {
-      const [baseUrl, qs] = url.split('?', 2)
-      const parsed = parse(qs)
-      url = `${baseUrl}?${stringify({ ...options.query, ...parsed })}`
-    } else {
-      url += `?${stringify(options.query)}`
-    }
+    const parsedUrl = new URL(url)
+
+    Object.entries(options.query).forEach(([k, v]) => {
+      if (parsedUrl.searchParams.get(k) === null) {
+        parsedUrl.searchParams.set(k, v.toString())
+      }
+    })
+
+    url = parsedUrl.toString()
   }
 
   const payload: RequestInit = {

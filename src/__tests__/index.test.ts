@@ -97,7 +97,7 @@ describe('mocked', () => {
     })
 
     describe('query params', () => {
-      it('should query headers to url', async () => {
+      it('should add query params to url', async () => {
         nock(URL).get('/params').query(BODY).reply(200, BODY)
 
         await expect(
