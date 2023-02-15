@@ -1,6 +1,6 @@
 {
   "name": "@xavdid/json-requests",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "An extremely simple package for GETting and POSTing JSON.",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
