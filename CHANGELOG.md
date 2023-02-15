@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.2
+
+_Released `2023-02-14`_
+
+- Properly include all `*.d.ts` files in the released package, for real this time.
+
 ## 0.2.1
 
 _Released `2023-02-14`_
