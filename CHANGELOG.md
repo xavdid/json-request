@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.2.1
+
+_Released `2023-02-14`_
+
+- Properly include all built files in the released package. Thanks to @scottbessler for the report! (https://github.com/xavdid/json-requests/pull/4)
+- Move `@types/...` dependencies into `devDevepencies` (https://github.com/xavdid/json-requests/pull/4)
+
 ## 0.2.0
 
 _Released `2023-02-12`_
