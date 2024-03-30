@@ -1,6 +1,6 @@
 # json-requests
 
-This is a simple, modern, ergonomic, **JSON-only** HTTP request client.
+This is a simple, modern, ergonomic, zero-dependency, **JSON-only** HTTP request client.
 
 The package is intentionally light on features and configuration. Responses (and outgoing bodies, if applicable) **must** be JSON - if you need a different response type, use a different package.
 

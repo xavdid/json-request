@@ -1,7 +1,3 @@
-// can remove when fetch is non-experimental
-// maybe Node 20?
-import fetch, { Headers, type RequestInit } from 'node-fetch'
-
 import { ResponseError } from './error'
 
 const jsonMime = 'application/json'
