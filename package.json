@@ -4,16 +4,10 @@
   "description": "An extremely simple package for GETting and POSTing JSON.",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
-  "scripts": {
-    "build": "tsc",
-    "lint": "eslint src",
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "test:types": "tsd",
-    "validate": "yarn test && yarn test:types && yarn lint",
-    "clean": "rm -rf lib"
-  },
-  "keywords": [],
+  "keywords": [
+    "http requests",
+    "json"
+  ],
   "files": [
     "lib/*.js",
     "lib/*.d.ts"
